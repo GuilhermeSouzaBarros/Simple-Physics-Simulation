@@ -8,7 +8,30 @@
 #include "stdio.h"
 #include "math.h"
 
-#include "shapes.h"
+typedef struct CollInf {
+    int col;
+    float gap_close;
+    float momentum;
+} CollInf;
+
+typedef struct Triangle {
+    Vector3 sides[3];
+} Triangle;
+
+typedef struct Prism4 {
+    float x_size;
+    float y_size;
+    float z_size;
+    Vector3 position;
+    Vector3 up;
+} Prism4;
+
+typedef struct Cylinder {
+    float radius;
+    float height;
+    Vector3 position;
+    Vector3 up;
+} Cylinder;
 
 typedef struct Physics_obj {
     void* hitbox;
@@ -26,9 +49,9 @@ typedef struct Player {
 } Player;
 
 typedef struct Map_obj {
-    int x_limit; // 0: None / 1: Start / 2: End / 3: Both 
-    int y_limit;
-    int z_limit;
+    int x_bound; // 0: None / 1: Start / 2: End / 3: Both 
+    int y_bound;
+    int z_bound;
     Vector3 start;
     Vector3 end;
 } Map_obj;
@@ -41,8 +64,14 @@ typedef struct Simulation {
     int num_maps;
 } Simulation;
 
-void setupPrism4(Physics_obj* obj, double x_size, double y_size, double z_size, Vector3 pos);
-
-void drawPrism4(Prism4 prisma);
+int sign(double number);
+double module(double number);
+double distance2Points(Vector3 p1, Vector3 p2);
+double vector2Module(Vector2 vector);
+double vector3Module(Vector3 vector);
+double vectorToAngle(Vector2 vector);
+double toRad(double degree);
+double toAngles(double radians);
+double circleArea(double radius);
 
 #endif

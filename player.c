@@ -32,8 +32,8 @@ void freePlayer(Player* player) {
     free(player);
 }
 
-void updateMovement(Player* player) {
-    if (!isGrounded(player->body)) return;
+void updateMovement(Player* player, Simulation* Simulation) {
+    if (!isGrounded(&player->body, Simulation)) return;
 
     int walk = 0, strafe = 0;
     if (IsKeyDown(KEY_W)) walk++;
@@ -68,8 +68,8 @@ void updateMovement(Player* player) {
     player->body.speed.z -= sin(toRad(direction)) * speed;
 }
 
-void updateJump(Player* player) {
-    if (isGrounded(player->body)) {
+void updateJump(Player* player, Simulation* simulation) {
+    if (isGrounded(&player->body, simulation)) {
         if (IsKeyPressed(KEY_SPACE)) {
             player->body.speed.y += 1.0f;
         }
@@ -116,8 +116,6 @@ void updateCamera(Player* player) {
 
 void updatePlayer(Simulation* simulation) {
     Player* player = simulation->player;
-    updateMovement(player);
-    updateJump(player);
-    updatePhysics(&player->body, simulation);
-    updateCamera(player);
+    updateMovement(player, simulation);
+    updateJump(player, simulation);
 };

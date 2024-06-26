@@ -12,6 +12,7 @@ Player* setupPlayer();
 
 void freePlayer(Player* player);
 
+void updateCamera(Player* player);
 void updatePlayer(Simulation* simulation);
 
 #endif

@@ -3,9 +3,9 @@
 
 #include "structs.h"
 #include "shapes.h"
+#include "map.h"
 
 void updatePhysics(Physics_obj* object, Simulation* simulation);
-void updateCoord(Simulation* Simulation);
-int isGrounded(Physics_obj object);
+int isGrounded(Physics_obj* object, Simulation* simulation);
 
 #endif

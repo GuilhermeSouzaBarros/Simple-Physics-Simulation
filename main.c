@@ -6,8 +6,8 @@
 
 int main() {
 
-    SetConfigFlags(FLAG_MSAA_4X_HINT); 
-    InitWindow(SCREEN_X, SCREEN_Y, "Testando");
+    SetConfigFlags(FLAG_MSAA_4X_HINT);
+    InitWindow(960, 540, "Testando");
     DisableCursor();
     SetExitKey(KEY_DELETE);
     Simulation* teste = setupSimulation();
