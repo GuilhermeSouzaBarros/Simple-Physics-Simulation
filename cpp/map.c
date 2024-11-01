@@ -1,4 +1,4 @@
-#include "map.h"
+#include "../h/map.h"
 
 int isTouchingMap(Physics_obj* obj, Map_obj* map) {
     Vector3 coll = {0, 0, 0};

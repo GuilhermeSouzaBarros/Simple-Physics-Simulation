@@ -1,4 +1,4 @@
-#include "physics.h"
+#include "../h/physics.h"
 
 void updateGravity(Physics_obj* obj) {
     obj->speed.y -= 9.8 / 75;

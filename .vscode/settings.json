@@ -3,6 +3,8 @@
         "raylib.h": "c",
         "math.h": "c",
         "structs.h": "c",
-        "objects.h": "c"
+        "objects.h": "c",
+        "simulation.h": "c",
+        "player.h": "c"
     }
 }

@@ -1,4 +1,4 @@
-#include "shapes.h"
+#include "../h/shapes.h"
 
 void setupPrism4(Physics_obj* obj, double x_size, double y_size, double z_size, Vector3 pos) {
     Prism4* prisma = (Prism4*)malloc(sizeof(Prism4));

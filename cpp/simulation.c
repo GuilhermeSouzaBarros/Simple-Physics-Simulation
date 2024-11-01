@@ -1,4 +1,4 @@
-#include "simulation.h"
+#include "../h/simulation.h"
 
 Simulation* setupSimulation() {
     Simulation* simulation = (Simulation*)malloc(sizeof(Simulation));

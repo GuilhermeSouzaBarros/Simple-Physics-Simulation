@@ -2,8 +2,8 @@ CC = gcc
 CFLAGS = -Wall -Wextra -g
 LDFLAGS =
 
-SRCS = $(wildcard *.c)
-OBJS = $(SRCS:.c=.o)
+SRCS = $(wildcard cpp/*.c)
+OBJS = $(SRCS:cpp/%.c=o/%.o)
 
 .PHONY: all clean
 
@@ -12,8 +12,11 @@ all: teste
 teste: $(OBJS)
 	$(CC) $(LDFLAGS) $^ -o $@ -lm -lraylib
 
-%.o: %.c
+o/main.o: cpp/main.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-clean:
+o/%.o: cpp/%.c h/%.h
+	$(CC) $(CFLAGS) -c $< -o $@
+
+clean:	
 	rm -f teste $(OBJS)

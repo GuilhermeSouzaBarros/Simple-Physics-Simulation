@@ -1,4 +1,4 @@
-#include "player.h"
+#include "../h/player.h"
 
 Player* setupPlayer() {
     Player* player = (Player*)malloc(sizeof(Player));

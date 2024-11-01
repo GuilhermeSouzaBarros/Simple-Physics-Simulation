@@ -1,4 +1,4 @@
-#include "structs.h"
+#include "../h/structs.h"
 
 int sign(double number) {
     if (number > 0) {

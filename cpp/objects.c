@@ -1,4 +1,4 @@
-#include "objects.h"
+#include "../h/objects.h"
 
 void updateProps(Simulation* simulation) {
     for(int i = 0; i < simulation->num_props; i++) {
