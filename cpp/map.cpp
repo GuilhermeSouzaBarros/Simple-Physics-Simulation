@@ -1,5 +1,45 @@
 #include "../h/map.h"
 
+void setupMapObject(Map_obj* object, int i) {
+    switch (i) {
+        case 0:
+            object->x_bound = 0;
+            object->y_bound = 2;
+            object->z_bound = 0;
+            object->start = (Vector3){0, 0, 0};
+            object->end = (Vector3){0, 0, 0};
+            break;
+        case 1:
+            object->x_bound = 1;
+            object->y_bound = 0;
+            object->z_bound = 0;
+            object->start = (Vector3){20, 0, 0};
+            object->end = (Vector3){0, 0, 0};
+            break;
+        case 2:
+            object->x_bound = 2;
+            object->y_bound = 0;
+            object->z_bound = 0;
+            object->start = (Vector3){0, 0, 0};
+            object->end = (Vector3){-20, 0, 0};
+            break;
+        case 3:
+            object->x_bound = 0;
+            object->y_bound = 0;
+            object->z_bound = 1;
+            object->start = (Vector3){0, 0, 20};
+            object->end = (Vector3){0, 0, 0};
+            break;
+        case 4:
+            object->x_bound = 0;
+            object->y_bound = 0;
+            object->z_bound = 2;
+            object->start = (Vector3){0, 0, 0};
+            object->end = (Vector3){0, 0, -20};
+            break;
+    }
+}
+
 int isTouchingMap(Physics_obj* obj, Map_obj* map) {
     Vector3 coll = {0, 0, 0};
     Prism4 prism = *(Prism4*)obj->hitbox;
@@ -87,44 +127,4 @@ Vector3 distanceMapCollision(Physics_obj* obj, Map_obj* map) {
         distanceMapCollisionAxis(prism.position.y, prism.y_size, map->start.y, map->end.y, map->y_bound),
         distanceMapCollisionAxis(prism.position.z, prism.z_size, map->start.z, map->end.z, map->z_bound)};
     return dist;
-}
-
-void updateObjCollisionMap(Physics_obj* obj, Map_obj* map, CollInf* col) {
-    if (!hasCollidedMap(obj, map)) return;
-    Vector3 dist = distanceMapCollision(obj, map);
-    col->col++;
-    col->momentum = 0.0f;
-    if (dist.x < 0) {
-        col->gap_close = sign(obj->speed.x) * (module(obj->speed.x) - module(dist.x));
-        obj->speed.x = col->gap_close;
-    }
-    if (dist.y < 0) {
-        col->gap_close = sign(obj->speed.y) * (module(obj->speed.y) - module(dist.y));
-        obj->speed.y = col->gap_close;
-    }
-    if (dist.z < 0) {
-        col->gap_close = sign(obj->speed.z) * (module(obj->speed.z) - module(dist.z));
-        obj->speed.z = col->gap_close;
-    }
-}
-
-void updateObjCollisionsMap(Physics_obj* obj, Simulation* simulation, CollInf* col) {
-    for (int i = 0; i < simulation->num_maps; i++) {
-        updateObjCollisionMap(obj, &simulation->map[i], col);
-    }
-}
-
-int isGroundedMap(Physics_obj* obj, Simulation* simulation) {
-    Prism4* prism = (Prism4*)obj->hitbox;
-    Vector3 prism_n = {prism->position.x + obj->speed.x,
-                        prism->position.y + obj->speed.y - 0.05f,
-                        prism->position.z + obj->speed.z};
-    for (int i = 0; i < simulation->num_maps; i++) {
-        if (isTouchingMap(obj, &simulation->map[i]) &&
-            distanceMapCollisionAxis(prism_n.y, prism->y_size,
-                simulation->map->start.y, simulation->map->end.y, simulation->map->y_bound) <= 0) {
-            return 1;
-        }
-    }
-    return 0;
 }

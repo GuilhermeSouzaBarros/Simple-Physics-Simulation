@@ -1,10 +1,12 @@
 {
     "files.associations": {
-        "raylib.h": "c",
-        "math.h": "c",
-        "structs.h": "c",
-        "objects.h": "c",
-        "simulation.h": "c",
-        "player.h": "c"
+        "raylib.h": "cpp",
+        "math.h": "cpp",
+        "structs.h": "cpp",
+        "objects.h": "cpp",
+        "simulation.h": "cpp",
+        "player.h": "cpp",
+        "stdio.h": "cpp",
+        "cmath": "cpp"
     }
 }

@@ -2,7 +2,6 @@
 #include "stdlib.h"
 
 #include "../h/simulation.h"
-#include "../h/structs.h"
 
 int main() {
 
@@ -10,16 +9,16 @@ int main() {
     InitWindow(1600, 900, "Testando");
     DisableCursor();
     SetExitKey(KEY_DELETE);
-    Simulation* teste = setupSimulation();
+    Simulation teste;
 
     SetTargetFPS(75);
 
     while(!WindowShouldClose()) {
-        updateSimulation(teste);
-        drawSimulation(teste);
+        teste.update();
+        teste.draw();
     }
 
-    freeSimulation(teste);
+    teste.freeSim();
     CloseWindow();
     return 0;
 }

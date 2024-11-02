@@ -5,14 +5,23 @@
 #include "stdlib.h"
 #include "math.h"
 
-#include "structs.h"
-#include "physics.h"
+#include "shapes.h"
 
-Player* setupPlayer();
+class Player {
+    Camera3D camera;
+    Vector2 cam_ang;
+    Physics_obj body;
 
-void freePlayer(Player* player);
+    public:
+        Player();
+        //void freePlayer();
+        void updateCoord();
+        Camera3D* getCamera();
+        Vector2* getCamAng();
+        Physics_obj* getBody();
 
-void updateCamera(Player* player);
-void updatePlayer(Simulation* simulation);
+        void updateCamera();
+
+};
 
 #endif
