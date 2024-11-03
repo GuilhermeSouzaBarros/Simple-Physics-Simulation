@@ -26,6 +26,7 @@ typedef struct Physics_obj {
 
 typedef struct chainColl {
     Physics_obj* obj;
+    float s_gap;
     struct chainColl* next;
 } chainColl;
 

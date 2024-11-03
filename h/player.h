@@ -8,11 +8,12 @@
 #include "shapes.h"
 
 class Player {
-    Camera3D camera;
-    Vector2 cam_ang;
-    Physics_obj body;
-
     public:
+        Camera3D camera;
+        int camera_mode;
+        Vector2 cam_ang;
+        float cam_dist;
+        Physics_obj body;
         Player();
         //void freePlayer();
         void updateCoord();
@@ -21,6 +22,12 @@ class Player {
         Physics_obj* getBody();
 
         void updateCamera();
+
+    private:
+        void cameraBound();
+        void switchCamera();
+        void updateCameraFP();
+        void updateCameraTP();
 
 };
 

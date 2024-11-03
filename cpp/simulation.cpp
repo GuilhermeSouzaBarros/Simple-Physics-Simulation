@@ -3,8 +3,8 @@
 Simulation::Simulation() {
     num_props = 2;
     props = (Physics_obj*)malloc(sizeof(Physics_obj) * num_props);
-    setupPrism4(&props[0], 2, 2, 2, (Vector3){-5, 2, 0}, 0.4, 0.6, 0.5, 50);
-    setupPrism4(&props[1], 3, 3, 3, (Vector3){5, 3, 0}, 0.4, 0.6, 0.5, 250);
+    setupPrism4(&props[0], 2, 2, 2, (Vector3){-5, 2, 0}, 0.4, 0.6, 0.5, 80);
+    setupPrism4(&props[1], 5, 1, 2, (Vector3){5, 3, 0}, 0.4, 0.6, 0.5, 100);
 
     num_maps = 5;
     map = (Map_obj*)malloc(sizeof(Map_obj) * num_maps);
@@ -25,7 +25,7 @@ void Simulation::freeSim() {
 int Simulation::isGroundedMap(Physics_obj* obj) {
     Prism4* obj_prism = (Prism4*)obj->hitbox;
     Prism4 prism = {obj_prism->x_size, obj_prism->y_size, obj_prism->z_size, obj_prism->position, obj_prism->up};
-    prism.position.y -= 4.0f*SMOLL_FLOAT;
+    prism.position.y -= 4.0f * SMOLL_FLOAT;
 
     Physics_obj n_obj = {(void*)(&prism), 0, obj->speed, obj->drag, obj->mass, {obj->fric[0], obj->fric[1]}};
     
@@ -79,7 +79,7 @@ void Simulation::updateObjCollisionMap(Physics_obj* obj, Map_obj* map) {
     if (!hasCollidedMap(obj, map)) return;
     Vector3 dist = distanceMapCollision(obj, map);
     
-    if (module(dist.x) - SMOLL_FLOAT <= module(obj->speed.x) && map->x_bound) {
+    if (dist.x + obj->speed.x < SMOLL_FLOAT && map->x_bound) {
         obj->speed.x = sign(obj->speed.x) * dist.x;
         if ( -SMOLL_FLOAT < obj->speed.x && obj->speed.x < SMOLL_FLOAT) obj->speed.x = 0.0f;
     }
@@ -89,7 +89,7 @@ void Simulation::updateObjCollisionMap(Physics_obj* obj, Map_obj* map) {
         if ( -SMOLL_FLOAT < obj->speed.y && obj->speed.y < SMOLL_FLOAT) obj->speed.y = 0.0f;
     }
 
-    if (module(dist.z) - SMOLL_FLOAT <= module(obj->speed.z) && map->z_bound) {
+    if (dist.z + obj->speed.z < SMOLL_FLOAT && map->z_bound) {
         obj->speed.z = sign(obj->speed.z) * dist.z;
         if ( -SMOLL_FLOAT < obj->speed.z && obj->speed.z < SMOLL_FLOAT) obj->speed.z = 0.0f;
     }
@@ -105,14 +105,21 @@ void Simulation::updateObjCollisionsMap(Physics_obj* obj) {
 void Simulation::momentumCollision(float* f_speed, float* t_speed, float dist,
                        float f_mass, float t_mass, Physics_obj* f_obj,
                        Physics_obj* t_obj) {  
-    
-    if (*f_speed + *t_speed == 0.0f) printf("Colision with 0 speed, what the sigma?\n");
-
+    if (floatIsZero(*t_speed + *f_speed)) {
+        printf("Collision with 0 speed dumb\n");
+        *t_speed = 0.0f;
+        *f_speed = 0.0f;
+        return;
+    }
+    printf("Spds: %f / %f\n", *f_speed, *t_speed);
     float ratio_f = *f_speed / (module(*f_speed) + module(*t_speed)),
           ratio_t = *t_speed / (module(*f_speed) + module(*t_speed));
-
+    printf("Rtos: %f / %f\n", ratio_f, ratio_t);
+    printf("Dist: %f\n", dist);
     float fs_gap = ratio_f * dist,
           ts_gap = ratio_t * dist;
+    smallFloatToZero(&fs_gap);
+    smallFloatToZero(&ts_gap);
 
     *f_speed -= fs_gap;
     *t_speed -= ts_gap;
@@ -121,12 +128,14 @@ void Simulation::momentumCollision(float* f_speed, float* t_speed, float dist,
 
     *f_speed = fs_gap + momentum;
     *t_speed = ts_gap + momentum;
+    *f_speed = sign(*f_speed) * (module(*f_speed) - SMOLL_FLOAT/2.0f);
+    if (floatIsZero(*f_speed)) {
+        smallFloatToZero(f_speed);
+    }
+    printf("Fspd: %f / %f\n", *f_speed, *t_speed);
 }
 
 void Simulation::collisionPrism4ToPrism4(Physics_obj* from_obj, Physics_obj* to_obj) {
-    if (from_obj == to_obj) {
-        printf("What the sigma?!\n");
-    }
     Prism4* prism1 = (Prism4*)from_obj->hitbox;
     Prism4* prism2 = (Prism4*)to_obj->hitbox;
 
@@ -144,19 +153,15 @@ void Simulation::collisionPrism4ToPrism4(Physics_obj* from_obj, Physics_obj* to_
                     float( module(prism1->position.y - prism2->position.y) - (prism1->y_size + prism2->y_size) / 2.0f),
                     float( module(prism1->position.z - prism2->position.z) - (prism1->z_size + prism2->z_size) / 2.0f)};
 
-    if ((dist.x <= 0 && dist.y <= 0 && dist.z <= 0)) {
-        printf("Why tho? %f / %f / %f\n", dist.x, dist.y, dist.z);
-    }
-
-    if (dist.x >= -SMOLL_FLOAT) {
+    if (dist.x > 0) {
         momentumCollision(&from_obj->speed.x, &to_obj->speed.x, dist.x,
                           from_obj->mass, to_obj->mass, from_obj, to_obj);
     }
-    if (dist.y >= -SMOLL_FLOAT) {
+    if (dist.y > 0) {
         momentumCollision(&from_obj->speed.y, &to_obj->speed.y, dist.y,
                           from_obj->mass, to_obj->mass, from_obj, to_obj);
     }
-    if (dist.z >= -SMOLL_FLOAT) {
+    if (dist.z > 0) {
         momentumCollision(&from_obj->speed.z, &to_obj->speed.z, dist.z,
                         from_obj->mass, to_obj->mass, from_obj, to_obj);
     }
@@ -248,6 +253,7 @@ void Simulation::updateMovement() {
     }
 
     double speed = 1.25/75;
+    if (player.camera_mode == CAMERA_THIRD_PERSON) speed *= -1;
     if (IsKeyDown(KEY_LEFT_SHIFT)) {
         speed *= 2.0f;
     } else if (IsKeyDown(KEY_LEFT_CONTROL)) {

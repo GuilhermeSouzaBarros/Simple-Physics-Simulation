@@ -1,5 +1,15 @@
 #include "../h/structs.h"
 
+int floatIsZero(float num) {
+    return (-SMOLL_FLOAT < num && num < SMOLL_FLOAT);
+}
+
+void smallFloatToZero(float* num) {
+    if (-SMOLL_FLOAT < *num && *num < SMOLL_FLOAT) {
+        *num = 0.0f;
+    }
+}
+
 int sign(double number) {
     if (number > 0) {
         return 1;
@@ -27,6 +37,14 @@ double vector2Module(Vector2 vector){
 
 double vector3Module(Vector3 vector) {
     return (sqrt(pow(vector.x, 2) + pow(vector.y, 2) + pow(vector.z, 2)));
+}
+
+Vector3 vector3Add(Vector3 v1, Vector3 v2) {
+    return (Vector3){v1.x + v2.x, v1.y + v2.y, v1.z + v2.z};
+}
+
+Vector3 vector3Sub(Vector3 v1, Vector3 v2) {
+    return (Vector3){v1.x - v2.x, v1.y - v2.y, v1.z - v2.z};
 }
 
 double vectorToAngle(Vector2 vector) {

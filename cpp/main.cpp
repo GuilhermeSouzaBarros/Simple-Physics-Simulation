@@ -13,8 +13,19 @@ int main() {
 
     SetTargetFPS(75);
 
+    int debug = 0;
     while(!WindowShouldClose()) {
-        teste.update();
+        if (IsKeyPressed(KEY_P)) {
+            debug++;
+            debug %= 2;
+        }
+        if (debug) {
+            if (IsKeyPressed(KEY_F)) {
+                teste.update();
+            }
+        } else {
+            teste.update();
+        }
         teste.draw();
     }
 

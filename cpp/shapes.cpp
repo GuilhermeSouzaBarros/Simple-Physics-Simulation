@@ -172,14 +172,14 @@ int hasCollidedPrism4ToPrism4(Prism4* prism1, Prism4* prism2, Vector3 prism1_n, 
                               prism2_n.z - prism2->position.z};
 
     if (getDistFarthestPoint(prism1, 0) + getDistFarthestPoint(prism2, 0) +
-        vector3Module(speed_1) + vector3Module(speed_2) + SMOLL_FLOAT <
+        vector3Module(speed_1) + vector3Module(speed_2) <
         distance2Points(prism1->position, prism2->position)) {
         return 0;
     }
 
-    if ((prism1->x_size + prism2->x_size)/2 + SMOLL_FLOAT < module(prism1_n.x - prism2_n.x) ||
-        (prism1->y_size + prism2->y_size)/2 + SMOLL_FLOAT < module(prism1_n.y - prism2_n.y) ||
-        (prism1->z_size + prism2->z_size)/2 + SMOLL_FLOAT < module(prism1_n.z - prism2_n.z)) {
+    if ((prism1->x_size + prism2->x_size)/2 < module(prism1_n.x - prism2_n.x) ||
+        (prism1->y_size + prism2->y_size)/2 < module(prism1_n.y - prism2_n.y) ||
+        (prism1->z_size + prism2->z_size)/2 < module(prism1_n.z - prism2_n.z)) {
         return 0;
     }
     return 1;
