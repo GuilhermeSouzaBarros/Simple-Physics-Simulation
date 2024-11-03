@@ -15,7 +15,6 @@ typedef struct Map_obj {
 } Map_obj;
 
 void setupMapObject(Map_obj* object, int i);
-int isTouchingMap(Physics_obj* obj, Map_obj* map);
 int hasCollidedMap(Physics_obj* obj, Map_obj* map);
 float distanceMapCollisionAxis(float pos, float size, float map_s, float map_e, int limit);
 Vector3 distanceMapCollision(Physics_obj* obj, Map_obj* map);

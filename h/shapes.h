@@ -24,7 +24,13 @@ typedef struct Physics_obj {
     float fric[2]; // 0: Stationary / 1: Moving
 } Physics_obj;
 
-void setupPrism4(Physics_obj* obj, double x_size, double y_size, double z_size, Vector3 pos);
+typedef struct chainColl {
+    Physics_obj* obj;
+    struct chainColl* next;
+} chainColl;
+
+void setupPrism4(Physics_obj* obj, double x_size, double y_size, double z_size, Vector3 pos,
+                 float fric_0, float fric_1, float drag, float mass);
 void drawPrism4(Prism4 prisma);
 
 Vector3 getCoordinates(void* object, int shape);

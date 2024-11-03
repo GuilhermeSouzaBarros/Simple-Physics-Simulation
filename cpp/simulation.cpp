@@ -1,9 +1,10 @@
 #include "../h/simulation.h"
 
 Simulation::Simulation() {
-    num_props = 1;
+    num_props = 2;
     props = (Physics_obj*)malloc(sizeof(Physics_obj) * num_props);
-    setupPrism4(&props[0], 2, 2, 2, (Vector3){-5, 1, 0});
+    setupPrism4(&props[0], 2, 2, 2, (Vector3){-5, 2, 0}, 0.4, 0.6, 0.5, 50);
+    setupPrism4(&props[1], 3, 3, 3, (Vector3){5, 3, 0}, 0.4, 0.6, 0.5, 250);
 
     num_maps = 5;
     map = (Map_obj*)malloc(sizeof(Map_obj) * num_maps);
@@ -20,15 +21,18 @@ void Simulation::freeSim() {
     free(map);
 }
 
+
 int Simulation::isGroundedMap(Physics_obj* obj) {
-    Prism4* prism = (Prism4*)obj->hitbox;
-    Vector3 prism_n = {prism->position.x + obj->speed.x,
-                        prism->position.y + obj->speed.y - 0.05f,
-                        prism->position.z + obj->speed.z};
+    Prism4* obj_prism = (Prism4*)obj->hitbox;
+    Prism4 prism = {obj_prism->x_size, obj_prism->y_size, obj_prism->z_size, obj_prism->position, obj_prism->up};
+    prism.position.y -= 4.0f*SMOLL_FLOAT;
+
+    Physics_obj n_obj = {(void*)(&prism), 0, obj->speed, obj->drag, obj->mass, {obj->fric[0], obj->fric[1]}};
+    
     for (int i = 0; i < num_maps; i++) {
-        if (isTouchingMap(obj, &map[i]) &&
-            distanceMapCollisionAxis(prism_n.y, prism->y_size,
-                map->start.y, map->end.y, map->y_bound) <= 0) {
+        if (hasCollidedMap(&n_obj, &map[i]) &&
+            distanceMapCollisionAxis(prism.position.y, prism.y_size,
+                map->start.y, map->end.y, map->y_bound) <= SMOLL_FLOAT) {
             return 1;
         }
     }
@@ -66,76 +70,63 @@ int Simulation::isGroundedProp(Physics_obj* obj) {
     return 0;
 }
 
-void Simulation::updateObjCollisionMap(Physics_obj* obj, Map_obj* map, CollInf* col) {
+int Simulation::isGrounded(Physics_obj* object) {
+    return isGroundedMap(object) || isGroundedProp(object);
+}
+
+
+void Simulation::updateObjCollisionMap(Physics_obj* obj, Map_obj* map) {
     if (!hasCollidedMap(obj, map)) return;
     Vector3 dist = distanceMapCollision(obj, map);
-    col->col++;
-    col->momentum = 0.0f;
-    if (dist.x < 0) {
-        col->gap_close = sign(obj->speed.x) * (module(obj->speed.x) - module(dist.x));
-        obj->speed.x = col->gap_close;
+    
+    if (module(dist.x) - SMOLL_FLOAT <= module(obj->speed.x) && map->x_bound) {
+        obj->speed.x = sign(obj->speed.x) * dist.x;
+        if ( -SMOLL_FLOAT < obj->speed.x && obj->speed.x < SMOLL_FLOAT) obj->speed.x = 0.0f;
     }
-    if (dist.y < 0) {
-        col->gap_close = sign(obj->speed.y) * (module(obj->speed.y) - module(dist.y));
-        obj->speed.y = col->gap_close;
+
+    if (dist.y + obj->speed.y < SMOLL_FLOAT && map->y_bound) {
+        obj->speed.y = sign(obj->speed.y) * dist.y;
+        if ( -SMOLL_FLOAT < obj->speed.y && obj->speed.y < SMOLL_FLOAT) obj->speed.y = 0.0f;
     }
-    if (dist.z < 0) {
-        col->gap_close = sign(obj->speed.z) * (module(obj->speed.z) - module(dist.z));
-        obj->speed.z = col->gap_close;
+
+    if (module(dist.z) - SMOLL_FLOAT <= module(obj->speed.z) && map->z_bound) {
+        obj->speed.z = sign(obj->speed.z) * dist.z;
+        if ( -SMOLL_FLOAT < obj->speed.z && obj->speed.z < SMOLL_FLOAT) obj->speed.z = 0.0f;
     }
 }
 
-void Simulation::updateObjCollisionsMap(Physics_obj* obj, CollInf* col) {
+void Simulation::updateObjCollisionsMap(Physics_obj* obj) {
     for (int i = 0; i < num_maps; i++) {
-        updateObjCollisionMap(obj, &map[i], col);
+        updateObjCollisionMap(obj, &map[i]);
     }
 }
 
-void Simulation::updateCollisionsPropsChain(Physics_obj* obj, Physics_obj* ign, CollInf* col) {
-    for (int i = 0; i < num_props; i++) {
-        if (props[i].hitbox == obj->hitbox) continue;
-        if (props[i].hitbox == ign->hitbox) continue;
-        updateCollisionProps(obj, &props[i], col);
-    }
-    if (obj->hitbox != player.getBody()) {
-        updateCollisionProps(obj, player.getBody(), col);
-    }
-}
-
-CollInf Simulation::updateCollisionsChain(Physics_obj* obj, Physics_obj* ign) {
-    CollInf col = {0, 0.0f, 0.0f};
-    updateObjCollisionsMap(obj, &col);
-    updateCollisionsPropsChain(obj, ign, &col);
-    return col;
-}
 
 void Simulation::momentumCollision(float* f_speed, float* t_speed, float dist,
                        float f_mass, float t_mass, Physics_obj* f_obj,
                        Physics_obj* t_obj) {  
+    
+    if (*f_speed + *t_speed == 0.0f) printf("Colision with 0 speed, what the sigma?\n");
 
     float ratio_f = *f_speed / (module(*f_speed) + module(*t_speed)),
-    ratio_t = *t_speed / (module(*f_speed) + module(*t_speed));
-    float fs_gap = ratio_f * dist, ts_gap = ratio_t * dist;
+          ratio_t = *t_speed / (module(*f_speed) + module(*t_speed));
+
+    float fs_gap = ratio_f * dist,
+          ts_gap = ratio_t * dist;
+
     *f_speed -= fs_gap;
     *t_speed -= ts_gap;
+
     float momentum = (*f_speed * f_mass + *t_speed * t_mass) / (f_mass + t_mass);
 
     *f_speed = fs_gap + momentum;
     *t_speed = ts_gap + momentum;
-    
-    CollInf f_chain = updateCollisionsChain(f_obj, t_obj);
-    if (f_chain.col) {
-        printf("%d / %f / %f\n", f_chain.col, f_chain.gap_close, f_chain.momentum);
-        *t_speed = ts_gap + (sign(*t_speed) * module(fs_gap - f_chain.gap_close)) + f_chain.momentum;
-    }
-    CollInf t_chain = updateCollisionsChain(t_obj, f_obj);
-    if (t_chain.col) {
-        printf("%d / %f / %f\n", t_chain.col, t_chain.gap_close, t_chain.momentum);
-        *f_speed = fs_gap + (sign(*f_speed) * module(ts_gap - t_chain.gap_close)) + t_chain.momentum;
-    }
 }
 
-void Simulation::collisionPrism4ToPrism4(Physics_obj* from_obj, Physics_obj* to_obj, CollInf* col) {
+void Simulation::collisionPrism4ToPrism4(Physics_obj* from_obj, Physics_obj* to_obj) {
+    if (from_obj == to_obj) {
+        printf("What the sigma?!\n");
+    }
     Prism4* prism1 = (Prism4*)from_obj->hitbox;
     Prism4* prism2 = (Prism4*)to_obj->hitbox;
 
@@ -149,52 +140,51 @@ void Simulation::collisionPrism4ToPrism4(Physics_obj* from_obj, Physics_obj* to_
 
     if (!hasCollidedPrism4ToPrism4(prism1, prism2, prism1_n, prism2_n)) return;
     
-    Vector3 dist = {float(module(prism1->position.x - prism2->position.x) - (prism1->x_size + prism2->x_size)/2),
-                    float(module(prism1->position.y - prism2->position.y) - (prism1->y_size + prism2->y_size)/2),
-                    float(module(prism1->position.z - prism2->position.z) - (prism1->z_size + prism2->z_size)/2)};
+    Vector3 dist = {float( module(prism1->position.x - prism2->position.x) - (prism1->x_size + prism2->x_size) / 2.0f),
+                    float( module(prism1->position.y - prism2->position.y) - (prism1->y_size + prism2->y_size) / 2.0f),
+                    float( module(prism1->position.z - prism2->position.z) - (prism1->z_size + prism2->z_size) / 2.0f)};
 
-    col->col++;
+    if ((dist.x <= 0 && dist.y <= 0 && dist.z <= 0)) {
+        printf("Why tho? %f / %f / %f\n", dist.x, dist.y, dist.z);
+    }
 
-    if (dist.x >= -0.0001f) {
+    if (dist.x >= -SMOLL_FLOAT) {
         momentumCollision(&from_obj->speed.x, &to_obj->speed.x, dist.x,
                           from_obj->mass, to_obj->mass, from_obj, to_obj);
     }
-    if (dist.y >= -0.0001f) {
+    if (dist.y >= -SMOLL_FLOAT) {
         momentumCollision(&from_obj->speed.y, &to_obj->speed.y, dist.y,
                           from_obj->mass, to_obj->mass, from_obj, to_obj);
     }
-    if (dist.z >= -0.0001f) {
+    if (dist.z >= -SMOLL_FLOAT) {
         momentumCollision(&from_obj->speed.z, &to_obj->speed.z, dist.z,
                         from_obj->mass, to_obj->mass, from_obj, to_obj);
     }
 }
 
-void Simulation::updateCollisionProps(Physics_obj* from_obj, Physics_obj* to_obj, CollInf* col) {
+void Simulation::updateCollisionProps(Physics_obj* from_obj, Physics_obj* to_obj) {
     switch(from_obj->hitbox_shape) {
         case 0:
             switch(to_obj->hitbox_shape) {
                 case 0:
-                    collisionPrism4ToPrism4(from_obj, to_obj, col);
+                    collisionPrism4ToPrism4(from_obj, to_obj);
             }
     }
 }
 
-void Simulation::updateCollisionsProps(Physics_obj* obj, CollInf* col) {
+void Simulation::updateCollisionsProps(Physics_obj* obj) {
     for (int i = 0; i < num_props; i++) {
-        if (props[i].hitbox == obj->hitbox) continue;
-        updateCollisionProps(obj, &props[i], col);
+        if (&props[i] == obj) continue;
+        updateCollisionProps(obj, &props[i]);
     }
-    if (obj->hitbox != player.getBody()) {
-        updateCollisionProps(obj, player.getBody(), col);
+    if (obj != player.getBody()) {
+        updateCollisionProps(obj, player.getBody());
     }
 }
+
 
 void Simulation::updateGravity(Physics_obj* obj) {
     obj->speed.y -= 9.8 / 75;
-}
-
-int Simulation::isGrounded(Physics_obj* object) {
-    return isGroundedMap(object) || isGroundedProp(object);
 }
 
 void Simulation::updateFriction(Physics_obj* obj) {
@@ -231,38 +221,6 @@ void Simulation::updatePhysics(Physics_obj* object) {
     updateDrag(object);
 }
 
-CollInf Simulation::updateCollisions(Physics_obj* obj) {
-    CollInf col = {0, 0.0f, 0.0f};
-    updateObjCollisionsMap(obj, &col);
-    updateCollisionsProps(obj, &col);
-    return col;
-}
-
-void Simulation::updateProps() {
-    for(int i = 0; i < num_props; i++) {
-        updatePhysics(&props[i]);
-    }
-    updatePhysics(player.getBody());
-    
-    CollInf col = {0, 0.0f, 0.0f};
-    for(int i = 0; i < num_props; i++) {
-        updateObjCollisionsMap(&props[i], &col);
-    }
-    updateObjCollisionsMap(player.getBody(), &col);
-
-    for(int i = 0; i < num_props; i++) {
-        updateCollisionsProps(&props[i], &col);
-    }
-    updateCollisionsProps(player.getBody(), &col);
-}
-
-void Simulation::updateCoords() {
-    for (int i = 0; i < num_props; i++) {
-        addCoordinates(props[i].hitbox, props[i].hitbox_shape,
-        (Vector3){props[i].speed.x, props[i].speed.y, props[i].speed.z});
-    }
-    player.updateCoord();
-}
 
 void Simulation::updateMovement() {
     if (!isGrounded(player.getBody())) return;
@@ -291,7 +249,9 @@ void Simulation::updateMovement() {
 
     double speed = 1.25/75;
     if (IsKeyDown(KEY_LEFT_SHIFT)) {
-        speed *= 2;
+        speed *= 2.0f;
+    } else if (IsKeyDown(KEY_LEFT_CONTROL)) {
+        speed /= 10.0f;
     }
 
     player.getBody()->speed.x -= cos(toRad(direction)) * speed;
@@ -311,14 +271,47 @@ void Simulation::updatePlayer() {
     updateJump();
 };
 
+
+void Simulation::updateCollisions(Physics_obj* obj) {
+    updateObjCollisionsMap(obj);
+    updateCollisionsProps(obj);
+}
+
+void Simulation::updateProps() {
+    for(int i = 0; i < num_props; i++) {
+        updatePhysics(&props[i]);
+    }
+    updatePhysics(player.getBody());
+    
+    for(int i = 0; i < num_props; i++) {
+        updateObjCollisionsMap(&props[i]);
+    }
+    updateObjCollisionsMap(player.getBody());
+
+    for(int i = 0; i < num_props; i++) {
+        updateCollisionsProps(&props[i]);
+    }
+    updateCollisionsProps(player.getBody());
+}
+
+void Simulation::updateCoords() {
+    for (int i = 0; i < num_props; i++) {
+        addCoordinates(props[i].hitbox, props[i].hitbox_shape,
+        (Vector3){props[i].speed.x, props[i].speed.y, props[i].speed.z});
+    }
+    player.updateCoord();
+}
+
 void Simulation::update() {
+    printf("\nNew Frame\n");
     updatePlayer();
     updateProps();
     updateCoords();
     player.updateCamera();
 }
 
-void Simulation::DrawProps() {
+
+void Simulation::drawProps() {
     for (int i = 0; i < num_props; i++) {
         switch (props[i].hitbox_shape) {
             case 0: {
@@ -331,6 +324,13 @@ void Simulation::DrawProps() {
             }
         }
     }
+}
+
+void Simulation::drawInfo() {
+    Physics_obj* body = player.getBody();
+    DrawText(TextFormat("POS: %.2f / %.2f / %.2f", ((Prism4*)body->hitbox)->position.x, ((Prism4*)body->hitbox)->position.y, ((Prism4*)body->hitbox)->position.z), 10, 10, 30, BLACK);
+    DrawText(TextFormat("SPD: %.2f / %.2f / %.2f", body->speed.x, body->speed.y, body->speed.z), 10, 40, 30, BLACK);
+    if (isGrounded(player.getBody())) DrawText("Grounded", 10, 70, 30, BLACK);
 }
 
 void Simulation::draw() {
@@ -354,8 +354,9 @@ void Simulation::draw() {
         
         DrawCubeWires(body.position, body.x_size, body.y_size, body.z_size, BLACK);
 
-        DrawProps();
+        drawProps();
     EndMode3D();
+    drawInfo();
     
     EndDrawing();
 }
