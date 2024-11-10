@@ -4,32 +4,25 @@
 #include "../h/simulation.h"
 
 int main() {
-
     SetConfigFlags(FLAG_MSAA_4X_HINT);
-    InitWindow(1440, 810, "Testando");
+    InitWindow(SCREEN_X, SCREEN_Y, "Testando");
     DisableCursor();
     SetExitKey(KEY_DELETE);
     Simulation teste;
 
-    SetTargetFPS(75);
+    SetTargetFPS(100);
 
-    int debug = 0;
     while(!WindowShouldClose()) {
-        if (IsKeyPressed(KEY_P)) {
-            debug++;
-            debug %= 2;
-        }
-        if (debug) {
-            if (IsKeyPressed(KEY_F)) {
-                teste.update();
-            }
-        } else {
+        teste.tick += GetFrameTime();
+        int updated = 0;
+        while(teste.tick >= TICK) {
             teste.update();
+            teste.tick -= TICK;
+            updated++;
         }
         teste.draw();
     }
 
-    teste.freeSim();
     CloseWindow();
     return 0;
 }

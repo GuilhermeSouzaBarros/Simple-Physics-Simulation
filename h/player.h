@@ -1,11 +1,12 @@
 #ifndef PLAYER
 #define PLAYER
 
-#include "stdio.h"
-#include "stdlib.h"
-#include "math.h"
+#include <raylib.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
 
-#include "shapes.h"
+#include "structs.h"
 
 class Player {
     public:
@@ -13,14 +14,12 @@ class Player {
         int camera_mode;
         Vector2 cam_ang;
         float cam_dist;
-        Physics_obj body;
-        Player();
-        //void freePlayer();
-        void updateCoord();
-        Camera3D* getCamera();
-        Vector2* getCamAng();
-        Physics_obj* getBody();
+        Vector3 position;
+        Vector3 speed;
 
+        Player();
+        
+        void updateCoord();
         void updateCamera();
 
     private:

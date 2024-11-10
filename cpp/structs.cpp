@@ -35,18 +35,6 @@ double vector2Module(Vector2 vector){
     return (sqrt(pow(vector.x, 2) + pow(vector.y, 2)));
 }
 
-double vector3Module(Vector3 vector) {
-    return (sqrt(pow(vector.x, 2) + pow(vector.y, 2) + pow(vector.z, 2)));
-}
-
-Vector3 vector3Add(Vector3 v1, Vector3 v2) {
-    return (Vector3){v1.x + v2.x, v1.y + v2.y, v1.z + v2.z};
-}
-
-Vector3 vector3Sub(Vector3 v1, Vector3 v2) {
-    return (Vector3){v1.x - v2.x, v1.y - v2.y, v1.z - v2.z};
-}
-
 double vectorToAngle(Vector2 vector) {
     float angle = toAngles(atan2(vector.y, vector.x));
     if (angle < 0) {
@@ -65,4 +53,40 @@ double toAngles(double radians) {
 
 double circleArea(double radius) {
     return (PI * pow(radius, 2));
+}
+
+
+double vector3Module(Vector3 vector) {
+    return (sqrt(pow(vector.x, 2) + pow(vector.y, 2) + pow(vector.z, 2)));
+}
+
+Vector3 vector3Add(Vector3 v1, Vector3 v2) {
+    return (Vector3){v1.x + v2.x, v1.y + v2.y, v1.z + v2.z};
+}
+
+Vector3 vector3Sub(Vector3 v1, Vector3 v2) {
+    return (Vector3){v1.x - v2.x, v1.y - v2.y, v1.z - v2.z};
+}
+Vector3 vector3Product(Vector3 v1, Vector3 v2) {
+    return (Vector3){v1.x * v2.x, v1.y * v2.y, v1.z * v2.z};
+}
+
+void setVector3ModuleToValue(Vector3 *p_vector, float value) {
+    float module = vector3Module(*p_vector);
+    if (floatIsZero(module)) return;
+    p_vector->x *= value/module;
+    p_vector->y *= value/module;
+    p_vector->z *= value/module;
+}
+
+Vector3 crossProduct(Vector3 vector_1, Vector3 vector_2) {
+    Vector3 product = {0.0f, 0.0f, 0.0f};
+    product.x = vector_1.y * vector_2.z - vector_2.y * vector_1.z;
+    product.y = -(vector_1.x * vector_2.z - vector_2.x * vector_1.z);
+    product.z = vector_1.x * vector_2.y - vector_2.x * vector_1.y;
+    return product;
+}
+
+void printVector3(Vector3 vector) {
+    printf("Vector: %f / %f / %f\n", vector.x, vector.y, vector.z);
 }
