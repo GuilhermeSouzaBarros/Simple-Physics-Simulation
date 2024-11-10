@@ -47,9 +47,10 @@ MeshData::MeshData() {
     updateMeshCoordinates();
 }
 
-void MeshData::freeMeshData() {
+MeshData::~MeshData() {
     free(p_current_vertices);
     free(p_model);
+    printf("MeshData desalocada\n");
 }
 
 void MeshData::matrixMultiplication(Vector3 *p_vector) {
@@ -110,15 +111,16 @@ void MeshData::stepMeshData(float deltaTime) {
 }
 
 void MeshData::drawMeshData() {
+    for (int index_f = 0; index_f < qtd_vertices; index_f++) {
+        for (int index_j = 0; index_j < qtd_vertices; index_j++) {
+            if (index_f == index_j) continue;
+            DrawLine3D(p_current_vertices[index_f], p_current_vertices[index_j], BLACK);
+        }
+        DrawSphereEx(p_current_vertices[index_f], 0.015f, 10, 10, BLACK);
+    }
     for (int index = 0; index < qtd_faces; index++) {
         DrawTriangle3D(*(p_model[index].p_vertices[0]),
                        *(p_model[index].p_vertices[1]),
                        *(p_model[index].p_vertices[2]), ColorAlpha(PINK, 0.5f));
-        DrawLine3D(*(p_model[index].p_vertices[0]), *(p_model[index].p_vertices[1]), BLACK);
-        DrawLine3D(*(p_model[index].p_vertices[1]), *(p_model[index].p_vertices[2]), BLACK);
-        DrawLine3D(*(p_model[index].p_vertices[2]), *(p_model[index].p_vertices[0]), BLACK);
-    }
-    for (int index = 0; index < qtd_vertices; index++) {
-        DrawSphereEx(p_current_vertices[index], 0.015f, 10, 10, BLACK);
     }
 }

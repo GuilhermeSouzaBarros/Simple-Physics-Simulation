@@ -11,7 +11,7 @@ Simulation::Simulation() {
 
 Simulation::~Simulation() {
     free(map);
-    mesh.freeMeshData();
+    printf("Simulation desalocada\n");
 }
 
 void Simulation::updateMovement() {

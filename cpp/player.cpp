@@ -12,6 +12,7 @@ Player::Player() {
 
     position = {0, 0, 0};
     speed = {0, 0, 0};
+    swapped = 0;
 }
 
 /*
@@ -82,7 +83,8 @@ void Player::updateCameraTP() {
 }
 
 void Player::switchCamera() {
-    if (!IsKeyPressed(KEY_Q)) return;
+    if (swapped or !IsKeyPressed(KEY_Q)) return;
+    swapped = 1;
     cam_ang = (Vector2){cam_ang.x - 180, 360 - cam_ang.y};
     cameraBound();
 

@@ -20,6 +20,7 @@ int main() {
             teste.tick -= TICK;
             updated++;
         }
+        teste.player.swapped = 0;
         teste.draw();
     }
 

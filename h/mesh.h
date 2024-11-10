@@ -18,7 +18,7 @@ namespace mesh {
     class MeshData {
         public:
             MeshData();
-            void freeMeshData();
+            ~MeshData();
             vertex *original_vertices;
             vertex *p_current_vertices;
             int qtd_vertices;

@@ -27,14 +27,9 @@ class Simulation {
         void updatePlayer();
 
     private:
-        void updateProps();
-        void updateCoords();
-
         void drawInfo();
-        void drawProps();
 
         void updateMovement();
-        void updateJump();
 };
 
 #endif

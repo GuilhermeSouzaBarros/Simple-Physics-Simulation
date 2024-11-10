@@ -14,6 +14,7 @@ class Player {
         int camera_mode;
         Vector2 cam_ang;
         float cam_dist;
+        short int swapped;
         Vector3 position;
         Vector3 speed;
 
