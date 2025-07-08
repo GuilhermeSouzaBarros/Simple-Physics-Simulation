@@ -1,22 +1,29 @@
-CC = g++
 CFLAGS = -Wall -Wextra -g
-LDFLAGS =
+LFLAGS = -lm -lraylib
+BIN = bin
+EXE = simulation
 
-SRCS = $(wildcard cpp/*.cpp)
-OBJS = $(SRCS:cpp/%.cpp=o/%.o)
+SRCS = $(filter-out src/main.cpp, $(wildcard src/*.cpp))
+OBJS = $(SRCS:src/%.cpp=$(BIN)/%.o)
 
-.PHONY: all clean
+.PHONY: all run clean
 
-all: teste
+all: $(BIN) $(EXE)
 
-teste: $(OBJS)
-	$(CC) $(LDFLAGS) $^ -o $@ -lm -lraylib
+shared: $(SHARED)/$(BIN) $(SHARED_OBJS)
 
-o/main.o: cpp/main.cpp
-	$(CC) $(CFLAGS) -c $< -o $@
+$(BIN)/%.o: src/%.cpp src/%.h 
+	g++ $(CFLAGS) -c $< -o $@
 
-o/%.o: cpp/%.cpp h/%.h
-	$(CC) $(CFLAGS) -c $< -o $@
+$(EXE): $(OBJS) src/main.cpp
+	g++ $(CFLAGS) -c src/main.cpp -o $(BIN)/main.o
+	g++ $(CFLAGS) $(OBJS) $(BIN)/main.o -o $@ $(LFLAGS) 
 
-clean:	
-	rm -f teste $(OBJS)
+$(BIN):
+	@test ! -d $@ && mkdir $@
+
+run: all
+	./$(EXE)
+
+clean:
+	rm -rf $(BIN) $(EXE)

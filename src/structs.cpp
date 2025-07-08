@@ -1,4 +1,18 @@
-#include "../h/structs.h"
+#include "structs.h"
+
+int SCREEN_X;
+int SCREEN_Y;
+
+void setScreen() {
+    SetConfigFlags(FLAG_MSAA_4X_HINT);
+    InitWindow(0, 0, "Alguem lê isso?");
+    SCREEN_X = GetScreenWidth();
+    SCREEN_Y = GetScreenHeight();
+    SetWindowSize(SCREEN_X * 0.8, SCREEN_Y * 0.8);
+    SetWindowPosition(SCREEN_X * 0.1, SCREEN_Y * 0.1);
+    DisableCursor();
+    SetExitKey(KEY_DELETE);
+}
 
 int floatIsZero(float num) {
     return (-SMOLL_FLOAT < num && num < SMOLL_FLOAT);

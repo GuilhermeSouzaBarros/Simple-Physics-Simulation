@@ -1,4 +1,4 @@
-#include "../h/map.h"
+#include "map.h"
 
 void setupMapObject(Map_obj* object, int i) {
     switch (i) {

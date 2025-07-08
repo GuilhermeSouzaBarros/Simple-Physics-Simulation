@@ -27,7 +27,7 @@ namespace mesh {
 
             Vector3 center_of_mass;
             Vector3 speed;
-            matrix::Matrix rotation = {3, 3};
+            myMatrix::Matrix rotation = {3, 3};
             Vector3 angularSpeed;
 
             void stepMeshData(float DeltaTime);
@@ -35,7 +35,6 @@ namespace mesh {
         
         private:
 
-            void matrixMultiplication(Vector3 *p_vector);
             void stepLinearMomentum(float deltaTime);
             void stepAngularMomentum(float deltatime);
             void updateMeshCoordinates();

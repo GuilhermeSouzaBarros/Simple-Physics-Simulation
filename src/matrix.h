@@ -1,9 +1,9 @@
 #ifndef MATRIX
 #define MATRIX
 
-#include <stdio.h>
+#include <raylib.h>
 
-namespace matrix {
+namespace myMatrix {
     class Matrix {
         public:
             Matrix(int init_rows, int init_columns);
@@ -13,6 +13,8 @@ namespace matrix {
             void setValue(int row, int column, float value);
             void addValue(int row, int column, float value);
             void printMatrix();
+
+            void multiplyVector(Vector3 *p_vector);
 
         private:
             int rows;

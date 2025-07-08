@@ -1,4 +1,4 @@
-#include "../h/simulation.h"
+#include "simulation.h"
 
 Simulation::Simulation() {
     tick = 0.0f;

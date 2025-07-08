@@ -1,4 +1,4 @@
-#include "../h/mesh.h"
+#include "mesh.h"
 using namespace mesh;
 
 MeshData::MeshData() {
@@ -53,23 +53,13 @@ MeshData::~MeshData() {
     printf("MeshData desalocada\n");
 }
 
-void MeshData::matrixMultiplication(Vector3 *p_vector) {
-    Vector3 result = {0.0f, 0.0f, 0.0f};
-    result.x = rotation.getValue(0, 0) * p_vector->x + rotation.getValue(0, 1) * p_vector->y + rotation.getValue(0, 2) * p_vector->z;
-    result.y = rotation.getValue(1, 0) * p_vector->x + rotation.getValue(1, 1) * p_vector->y + rotation.getValue(1, 2) * p_vector->z;
-    result.z = rotation.getValue(2, 0) * p_vector->x + rotation.getValue(2, 1) * p_vector->y + rotation.getValue(2, 2) * p_vector->z;
-    p_vector->x = result.x;
-    p_vector->y = result.y;
-    p_vector->z = result.z;
-}
-
 void MeshData::updateMeshCoordinates() {
     for (int index_vertex = 0; index_vertex < qtd_vertices; index_vertex++) {
         p_current_vertices[index_vertex].x = original_vertices[index_vertex].x;
         p_current_vertices[index_vertex].y = original_vertices[index_vertex].y;
         p_current_vertices[index_vertex].z = original_vertices[index_vertex].z;
 
-        matrixMultiplication(&p_current_vertices[index_vertex]);
+        rotation.multiplyVector(&p_current_vertices[index_vertex]);
 
         p_current_vertices[index_vertex].x += center_of_mass.x;
         p_current_vertices[index_vertex].y += center_of_mass.y;

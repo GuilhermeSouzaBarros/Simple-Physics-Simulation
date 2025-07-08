@@ -1,8 +1,6 @@
 #ifndef STRUCTS
 #define STRUCTS
 
-#define SCREEN_X 1600
-#define SCREEN_Y 900
 #define SMOLL_FLOAT 0.001953125f
 #define TICK 0.001f
 
@@ -13,6 +11,11 @@
 typedef struct Triangle {
     Vector3 sides[3];
 } Triangle;
+
+extern int SCREEN_X;
+extern int SCREEN_Y;
+
+void setScreen();
 
 int sign(double number);
 int floatIsZero(float num);

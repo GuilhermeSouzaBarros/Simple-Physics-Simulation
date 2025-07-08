@@ -1,4 +1,4 @@
-#include "../h/player.h"
+#include "player.h"
 
 Player::Player() {
     camera_mode = CAMERA_FIRST_PERSON;
@@ -14,13 +14,6 @@ Player::Player() {
     speed = {0, 0, 0};
     swapped = 0;
 }
-
-/*
-void freePlayer(Player* player) {
-    free(player->body.hitbox);
-    free(player);
-}
-*/
 
 void Player::cameraBound() {
     if (cam_ang.x > 360) {
