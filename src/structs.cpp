@@ -5,7 +5,7 @@ int SCREEN_Y;
 
 void setScreen() {
     SetConfigFlags(FLAG_MSAA_4X_HINT);
-    InitWindow(0, 0, "Alguem lê isso?");
+    InitWindow(0, 0, "Easter Egg?!?!");
     SCREEN_X = GetScreenWidth();
     SCREEN_Y = GetScreenHeight();
     SetWindowSize(SCREEN_X * 0.8, SCREEN_Y * 0.8);

@@ -10,8 +10,6 @@ Player::Player() {
     camera.projection = CAMERA_PERSPECTIVE;
     cam_ang = (Vector2){180, 180};
 
-    position = {0, 0, 0};
-    speed = {0, 0, 0};
     swapped = 0;
 }
 
@@ -29,14 +27,14 @@ void Player::cameraBound() {
 }
 
 void Player::updateCameraFP() {
-    camera.position.x = position.x;
-    camera.position.y = position.y + 0.8f;
-    camera.position.z = position.z;
+    camera.position.x = hitbox.position.x;
+    camera.position.y = hitbox.position.y + 0.8f;
+    camera.position.z = hitbox.position.z;
 
     Vector2 delta = GetMouseDelta(), camRad;
 
-    delta.x *= 10.0/SCREEN_X;
-    delta.y *= 10.0/SCREEN_X;
+    delta.x *= 100.0/SCREEN_X;
+    delta.y *= 100.0/SCREEN_X;
 
     cam_ang.x += delta.x;
     cam_ang.y += delta.y;
@@ -54,14 +52,14 @@ void Player::updateCameraTP() {
     if (cam_dist < 6.0f && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))  cam_dist += 0.5f;
     if (cam_dist > 1.0f && IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) cam_dist -= 0.5f;
     
-    camera.target.x = position.x;
-    camera.target.y = position.y + 0.8f;
-    camera.target.z = position.z;
+    camera.target.x = hitbox.position.x;
+    camera.target.y = hitbox.position.y + 0.8f;
+    camera.target.z = hitbox.position.z;
 
     Vector2 delta = GetMouseDelta(), camRad;
 
-    delta.x *= 10.0/SCREEN_X;
-    delta.y *= -10.0/SCREEN_X;
+    delta.x *= 100.0/SCREEN_X;
+    delta.y *= -100.0/SCREEN_X;
 
     cam_ang.x += delta.x;
     cam_ang.y += delta.y;
@@ -76,7 +74,7 @@ void Player::updateCameraTP() {
 }
 
 void Player::switchCamera() {
-    if (swapped or !IsKeyPressed(KEY_Q)) return;
+    if (swapped || !IsKeyPressed(KEY_Q)) return;
     swapped = 1;
     cam_ang = (Vector2){cam_ang.x - 180, 360 - cam_ang.y};
     cameraBound();
@@ -88,7 +86,6 @@ void Player::switchCamera() {
         cam_dist = 1.5f;
         camera_mode = CAMERA_FIRST_PERSON;
     }
-
 }
 
 void Player::updateCamera() {
@@ -99,9 +96,3 @@ void Player::updateCamera() {
         updateCameraTP();
     }
 }
-
-void Player::updateCoord() {
-    position.x += speed.x;
-    position.y += speed.y;
-    position.z += speed.z;
-};

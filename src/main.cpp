@@ -20,7 +20,7 @@ int main() {
         }
         int updated = 0;
         while(teste.tick >= TICK) {
-            teste.update();
+            teste.update(TICK);
             teste.tick -= TICK;
             updated++;
         }
