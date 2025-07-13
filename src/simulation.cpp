@@ -114,9 +114,16 @@ void Simulation::update(double delta) {
 }
 
 void Simulation::drawInfo() {
-    DrawText(TextFormat("POS: %.2f / %.2f / %.2f", player.hitbox.position.x, player.hitbox.position.y, player.hitbox.position.z), 10, 10, 30, BLACK);
-    DrawText(TextFormat("SPD: %.2f / %.2f / %.2f", player.hitbox.speed.x, player.hitbox.speed.y, player.hitbox.speed.z), 10, 40, 30, BLACK);
-    if (isGrounded(&player.hitbox, 0)) DrawText("Grounded", 10, 70, 30, BLACK);
+    int text_size = SCREEN_Y / 30;
+    DrawText(TextFormat("POS: % 6.2f / % 6.2f / % 6.2f", player.hitbox.position.x, player.hitbox.position.y, player.hitbox.position.z), 10, 10, text_size, BLACK);
+    DrawText(TextFormat("SPD: % 6.2f / % 6.2f / % 6.2f", player.hitbox.speed.x, player.hitbox.speed.y, player.hitbox.speed.z), 10, 40, text_size, BLACK);
+    if (isGrounded(&player.hitbox, 0)) DrawText("Grounded", 10, 70, text_size, BLACK);
+
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            DrawText(TextFormat("% 6.2f", mesh.transformation.values[i][j]), SCREEN_X - 700 + 160 * j, 10 + 50 * i, 2*text_size, BLACK);
+        }
+    }
 }
 
 void Simulation::draw() {

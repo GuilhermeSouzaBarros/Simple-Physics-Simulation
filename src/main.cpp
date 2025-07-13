@@ -12,7 +12,7 @@ int main() {
 
     int debug = 0;
     while(!WindowShouldClose()) {
-        if (IsKeyPressed(KEY_P)) debug = !debug;
+        if (IsKeyPressed(KEY_ESCAPE)) debug = !debug;
         if (!debug) {
             teste.tick += GetFrameTime();
         } else if (IsKeyDown(KEY_E)) {
@@ -24,7 +24,7 @@ int main() {
             teste.tick -= TICK;
             updated++;
         }
-        
+        updateScreen();
         teste.draw();
     }
 

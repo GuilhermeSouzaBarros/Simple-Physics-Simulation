@@ -2,16 +2,33 @@
 
 int SCREEN_X;
 int SCREEN_Y;
+int POS_X;
+int POS_Y;
 
 void setScreen() {
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(0, 0, "Easter Egg?!?!");
-    SCREEN_X = GetScreenWidth();
-    SCREEN_Y = GetScreenHeight();
-    SetWindowSize(SCREEN_X * 0.8, SCREEN_Y * 0.8);
-    SetWindowPosition(SCREEN_X * 0.1, SCREEN_Y * 0.1);
+    int full_x = GetScreenWidth(), full_y = GetScreenHeight();
+    SCREEN_X = full_x * 0.8;
+    SCREEN_Y = full_y * 0.8;
+    POS_X = full_x * 0.1;
+    POS_Y = full_y * 0.1;
+    SetWindowSize(SCREEN_X, SCREEN_Y);
+    SetWindowPosition(POS_X, POS_Y);
     DisableCursor();
     SetExitKey(KEY_DELETE);
+}
+
+void updateScreen() {
+    if (!IsKeyPressed(KEY_F11)) return;
+    ToggleFullscreen();
+    if (IsWindowFullscreen()) {
+        printf("width a: %d\n", GetScreenWidth());
+    } else {
+        SetWindowSize(SCREEN_X, SCREEN_Y);
+        SetWindowPosition(POS_X, POS_Y);
+        printf("width b: %d\n", GetScreenWidth());
+    }
 }
 
 int floatIsZero(float num) {
@@ -91,6 +108,25 @@ void setVector3ModuleToValue(Vector3 *p_vector, float value) {
     p_vector->x *= value/module;
     p_vector->y *= value/module;
     p_vector->z *= value/module;
+}
+
+double dotProduct(Vector3 vector_1, Vector3 vector_2) {
+    return
+        vector_1.x * vector_2.x +
+        vector_1.y * vector_2.y +
+        vector_1.z * vector_2.z;
+}
+
+double project(Vector3 vector_1, Vector3 vector_2) {
+    return dotProduct(vector_1, vector_2) / vector3Module(vector_1);
+}
+
+Vector3 removeProjection(Vector3 vector_1, Vector3 vector_2) {
+    double projection = project(vector_1, vector_2);
+    vector_2.x -= vector_1.x * projection;
+    vector_2.y -= vector_1.y * projection;
+    vector_2.z -= vector_1.z * projection;
+    return vector_2;
 }
 
 Vector3 crossProduct(Vector3 vector_1, Vector3 vector_2) {

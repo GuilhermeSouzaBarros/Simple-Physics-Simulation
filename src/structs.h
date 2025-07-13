@@ -16,6 +16,7 @@ extern int SCREEN_X;
 extern int SCREEN_Y;
 
 void setScreen();
+void updateScreen();
 
 int sign(double number);
 int floatIsZero(float num);
@@ -35,6 +36,9 @@ Vector3 vector3Add(Vector3 v1, Vector3 v2);
 Vector3 vector3Sub(Vector3 v1, Vector3 v2);
 Vector3 vector3Product(Vector3 v1, Vector3 v2);
 void setVector3ModuleToValue(Vector3 *p_vector, float value);
+double dotProduct(Vector3 vector_1, Vector3 vector_2);
+double project(Vector3 vector_1, Vector3 vector_2);
+Vector3 removeProjection(Vector3 vector_1, Vector3 vector_2);
 Vector3 crossProduct(Vector3 vector_1, Vector3 vector_2); //Produto Vetorial
 void printVector3(Vector3 vector);
 

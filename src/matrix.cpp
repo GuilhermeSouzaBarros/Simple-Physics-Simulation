@@ -8,51 +8,30 @@ using namespace myMatrix;
 myMatrix::Matrix::Matrix(int init_rows, int init_columns) {
     rows = init_rows;
     columns = init_columns;
-    int size = rows * columns;
-    values = (float*)malloc(sizeof(float) * size);
-    for (int index = 0; index < size; index++) {
-        values[index] = 0.0f;
+    
+    values = (float**)malloc(sizeof(float*) * init_rows);
+    for (int index = 0; index < init_rows; index++) {
+        values[index] = (float*)malloc(sizeof(float) * init_columns);
+        for (int jndex = 0; jndex < init_columns; jndex++) {
+            values[index][jndex] = 0.0f;
+        }
     }
 }
 
 myMatrix::Matrix::~Matrix() {
-    printf("Matrix desalocada\n");
+    for (int i = 0; i < rows; i++) {
+        free(values[i]);
+    }
     free(values);
+    printf("Matrix desalocada\n");
 }
 
 void myMatrix::Matrix::multiplyVector(Vector3 *p_vector) {
     Vector3 result = {0.0f, 0.0f, 0.0f};
-    result.x = getValue(0, 0) * p_vector->x + getValue(0, 1) * p_vector->y + getValue(0, 2) * p_vector->z;
-    result.y = getValue(1, 0) * p_vector->x + getValue(1, 1) * p_vector->y + getValue(1, 2) * p_vector->z;
-    result.z = getValue(2, 0) * p_vector->x + getValue(2, 1) * p_vector->y + getValue(2, 2) * p_vector->z;
+    result.x = values[0][0] * p_vector->x + values[0][1] * p_vector->y + values[0][2] * p_vector->z + values[0][3];
+    result.y = values[1][0] * p_vector->x + values[1][1] * p_vector->y + values[1][2] * p_vector->z + values[1][3];
+    result.z = values[2][0] * p_vector->x + values[2][1] * p_vector->y + values[2][2] * p_vector->z + values[2][3];
     p_vector->x = result.x;
     p_vector->y = result.y;
     p_vector->z = result.z;
-}
-
-int myMatrix::Matrix::toIndex(int row, int column) {
-    return row * columns + column;
-}
-
-float myMatrix::Matrix::getValue(int row, int column) {
-    return values[toIndex(row, column)];
-}
-
-void myMatrix::Matrix::setValue(int row, int column, float value) {
-    values[toIndex(row, column)] = value;
-}
-
-void myMatrix::Matrix::addValue(int row, int column, float value) {
-    values[toIndex(row, column)] += value;
-}
-
-void myMatrix::Matrix::printMatrix() {
-    for (int index_row = 0; index_row < rows; index_row++) {
-        printf("Row %d: ", index_row);
-        for (int index_column = 0; index_column < columns; index_column++) {
-            printf("%5.2f ", getValue(index_row, index_column));
-        }
-        printf("\n");
-    }
-    printf("\n");
 }

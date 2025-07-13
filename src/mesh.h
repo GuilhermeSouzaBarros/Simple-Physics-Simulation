@@ -25,16 +25,20 @@ namespace mesh {
             face *p_model;
             int qtd_faces;
 
-            Vector3 center_of_mass;
+            int locked;
+            int first_update;
             Vector3 speed;
-            myMatrix::Matrix rotation = {3, 3};
+            myMatrix::Matrix transformation = {4, 4};
             Vector3 angularSpeed;
 
             void stepMeshData(float DeltaTime);
+            void reset();
             void drawMeshData();
         
         private:
-
+            void normalizeColumn(int c);
+            void degreesOfFreedom();
+            void ortogonalize();
             void stepLinearMomentum(float deltaTime);
             void stepAngularMomentum(float deltatime);
             void updateMeshCoordinates();
