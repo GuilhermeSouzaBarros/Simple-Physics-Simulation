@@ -50,7 +50,7 @@ void Simulation::updateMovement(double delta) {
         direction -= 360;
     }
 
-    double speed = 1.5f;
+    double speed = 1.2f;
     if (player.camera_mode == CAMERA_THIRD_PERSON) speed *= -1;
     if (IsKeyDown(KEY_LEFT_SHIFT)) {
         speed *= 2.0f;

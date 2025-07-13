@@ -8,7 +8,7 @@ MeshData::MeshData() {
     original_vertices[0] = {-1.5f, -0.75f, -0.5f};
     original_vertices[1] = {-1.5f, -0.75f,  0.5f};
     original_vertices[2] = {-1.5f,  0.75f,  0.5f};
-    original_vertices[3] = {-1.5f,  0.75f, -0.5f};
+    original_vertices[3] = {-2.0f,  0.75f, -0.5f};
     original_vertices[4] = { 1.5f,  0.75f, -0.5f};
     original_vertices[5] = { 1.5f,  0.75f,  0.5f};
     original_vertices[6] = { 1.5f, -0.75f,  0.5f};
@@ -104,19 +104,19 @@ void MeshData::stepMeshData(float deltaTime) {
     updateMeshCoordinates();
     if (first_update) {
         if (IsKeyDown(KEY_LEFT_CONTROL)) {
-            if (IsKeyDown(KEY_J)) angularSpeed.x -= 0.1; 
-            if (IsKeyDown(KEY_U)) angularSpeed.x += 0.1; 
-            if (IsKeyDown(KEY_K)) angularSpeed.y -= 0.1; 
-            if (IsKeyDown(KEY_I)) angularSpeed.y += 0.1; 
-            if (IsKeyDown(KEY_L)) angularSpeed.z -= 0.1; 
-            if (IsKeyDown(KEY_O)) angularSpeed.z += 0.1;
+            if (IsKeyDown(KEY_J)) angularSpeed.x -= 0.05; 
+            if (IsKeyDown(KEY_U)) angularSpeed.x += 0.05; 
+            if (IsKeyDown(KEY_K)) angularSpeed.y -= 0.05; 
+            if (IsKeyDown(KEY_I)) angularSpeed.y += 0.05; 
+            if (IsKeyDown(KEY_L)) angularSpeed.z -= 0.05; 
+            if (IsKeyDown(KEY_O)) angularSpeed.z += 0.05;
         } else {
-            if (IsKeyDown(KEY_J)) speed.x -= 0.1; 
-            if (IsKeyDown(KEY_U)) speed.x += 0.1; 
-            if (IsKeyDown(KEY_K)) speed.y -= 0.1; 
-            if (IsKeyDown(KEY_I)) speed.y += 0.1; 
-            if (IsKeyDown(KEY_L)) speed.z -= 0.1; 
-            if (IsKeyDown(KEY_O)) speed.z += 0.1;
+            if (IsKeyDown(KEY_J)) speed.x -= 0.05; 
+            if (IsKeyDown(KEY_U)) speed.x += 0.05; 
+            if (IsKeyDown(KEY_K)) speed.y -= 0.05; 
+            if (IsKeyDown(KEY_I)) speed.y += 0.05; 
+            if (IsKeyDown(KEY_L)) speed.z -= 0.05; 
+            if (IsKeyDown(KEY_O)) speed.z += 0.05;
         }
         if (IsKeyPressed(KEY_F)) {
             locked = !locked;
