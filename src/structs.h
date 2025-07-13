@@ -12,8 +12,9 @@ typedef struct Triangle {
     Vector3 sides[3];
 } Triangle;
 
-extern int SCREEN_X;
-extern int SCREEN_Y;
+extern int FULL_X, FULL_Y;
+extern int SCREEN_X, SCREEN_Y;
+extern int POS_X, POS_Y;
 
 void setScreen();
 void updateScreen();

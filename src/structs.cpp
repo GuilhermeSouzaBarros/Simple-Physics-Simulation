@@ -1,33 +1,34 @@
 #include "structs.h"
 
-int SCREEN_X;
-int SCREEN_Y;
-int POS_X;
-int POS_Y;
+int FULL_X, FULL_Y;
+int SCREEN_X, SCREEN_Y;
+int POS_X, POS_Y;
 
 void setScreen() {
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(0, 0, "Easter Egg?!?!");
-    int full_x = GetScreenWidth(), full_y = GetScreenHeight();
-    SCREEN_X = full_x * 0.8;
-    SCREEN_Y = full_y * 0.8;
-    POS_X = full_x * 0.1;
-    POS_Y = full_y * 0.1;
+    FULL_X= GetScreenWidth(); FULL_Y = GetScreenHeight();
+    SCREEN_X = FULL_X * 0.8;
+    SCREEN_Y = FULL_Y * 0.8;
+    POS_X = FULL_X * 0.1;
+    POS_Y = FULL_Y * 0.1;
     SetWindowSize(SCREEN_X, SCREEN_Y);
     SetWindowPosition(POS_X, POS_Y);
     DisableCursor();
+    
     SetExitKey(KEY_DELETE);
+    SetTargetFPS(100);
 }
 
 void updateScreen() {
+    if (!IsCursorOnScreen()) {
+        SetMousePosition(0, 0);
+    }
     if (!IsKeyPressed(KEY_F11)) return;
     ToggleFullscreen();
-    if (IsWindowFullscreen()) {
-        printf("width a: %d\n", GetScreenWidth());
-    } else {
+    if (!IsWindowFullscreen()) {
         SetWindowSize(SCREEN_X, SCREEN_Y);
         SetWindowPosition(POS_X, POS_Y);
-        printf("width b: %d\n", GetScreenWidth());
     }
 }
 

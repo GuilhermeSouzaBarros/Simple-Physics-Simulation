@@ -8,8 +8,6 @@ int main() {
     setScreen();
     Simulation teste;
 
-    SetTargetFPS(100);
-
     int debug = 0;
     while(!WindowShouldClose()) {
         if (IsKeyPressed(KEY_ESCAPE)) debug = !debug;

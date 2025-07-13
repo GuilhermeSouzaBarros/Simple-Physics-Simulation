@@ -114,14 +114,22 @@ void Simulation::update(double delta) {
 }
 
 void Simulation::drawInfo() {
-    int text_size = SCREEN_Y / 30;
+    int start = SCREEN_X * 0.55;
+    int text_size = SCREEN_Y * 0.05;
+    if (IsWindowFullscreen()) {
+        text_size = FULL_Y * 0.05;
+        start = FULL_X * 0.5;
+    }
+    int gap_y = text_size * 1.1;
+    int gap_x = text_size * 4;
     DrawText(TextFormat("POS: % 6.2f / % 6.2f / % 6.2f", player.hitbox.position.x, player.hitbox.position.y, player.hitbox.position.z), 10, 10, text_size, BLACK);
-    DrawText(TextFormat("SPD: % 6.2f / % 6.2f / % 6.2f", player.hitbox.speed.x, player.hitbox.speed.y, player.hitbox.speed.z), 10, 40, text_size, BLACK);
-    if (isGrounded(&player.hitbox, 0)) DrawText("Grounded", 10, 70, text_size, BLACK);
+    DrawText(TextFormat("SPD: % 6.2f / % 6.2f / % 6.2f", player.hitbox.speed.x, player.hitbox.speed.y, player.hitbox.speed.z), 10, gap_y , text_size, BLACK);
+    if (isGrounded(&player.hitbox, 0)) DrawText("Grounded", 10, 2*gap_y, text_size, BLACK);
+    if (mesh.locked) DrawText("Orthonormalized", 10, 3*gap_y, text_size, BLACK);
 
     for (int i = 0; i < 4; i++) {
         for (int j = 0; j < 4; j++) {
-            DrawText(TextFormat("% 6.2f", mesh.transformation.values[i][j]), SCREEN_X - 700 + 160 * j, 10 + 50 * i, 2*text_size, BLACK);
+            DrawText(TextFormat("% 6.2f", mesh.transformation.values[i][j]), start + gap_x * j, 10 + gap_y * 1.5 * i, 1.5*text_size, BLACK);
         }
     }
 }
@@ -145,7 +153,7 @@ void Simulation::draw() {
         DrawCube((Vector3){0, 2.5, 21}, 40, 5, 2, ColorAlpha(GREEN, 0.5));
         DrawCubeWires((Vector3){0, 2.5, 21}, 40, 5, 2, BLACK);
 
-        //if(player.camera_mode == CAMERA_THIRD_PERSON)
+        if(player.camera_mode == CAMERA_THIRD_PERSON)
             player.hitbox.draw();
 
         mesh.drawMeshData();
