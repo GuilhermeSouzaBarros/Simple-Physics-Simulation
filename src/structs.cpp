@@ -8,6 +8,7 @@ void setScreen() {
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(0, 0, "Easter Egg?!?!");
     FULL_X= GetScreenWidth(); FULL_Y = GetScreenHeight();
+    printf("%d %d\n", FULL_X, FULL_Y);
     SCREEN_X = FULL_X * 0.8;
     SCREEN_Y = FULL_Y * 0.8;
     POS_X = FULL_X * 0.1;

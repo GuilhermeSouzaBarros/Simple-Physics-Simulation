@@ -8,7 +8,7 @@ MeshData::MeshData() {
     original_vertices[0] = {-1.5f, -0.75f, -0.5f};
     original_vertices[1] = {-1.5f, -0.75f,  0.5f};
     original_vertices[2] = {-1.5f,  0.75f,  0.5f};
-    original_vertices[3] = {-2.0f,  0.75f, -0.5f};
+    original_vertices[3] = {-1.5f,  0.75f, -0.5f};
     original_vertices[4] = { 1.5f,  0.75f, -0.5f};
     original_vertices[5] = { 1.5f,  0.75f,  0.5f};
     original_vertices[6] = { 1.5f, -0.75f,  0.5f};
@@ -165,6 +165,17 @@ void MeshData::drawMeshData() {
     first_update = 1;
     if (IsKeyPressed(KEY_R)) reset();
     if (locked) degreesOfFreedom();
+
+    Vector3 origin = {transformation.values[0][3], transformation.values[1][3], transformation.values[2][3]};
+
+    DrawLine3D(origin, (Vector3){origin.x + angularSpeed.x,
+                                 origin.y + angularSpeed.y,
+                                 origin.z + angularSpeed.z}, ORANGE);
+    
+    DrawLine3D(origin, (Vector3){origin.x + speed.x,
+                                 origin.y + speed.y,
+                                 origin.z + speed.z}, DARKPURPLE);
+
     for (int index_f = 0; index_f < qtd_vertices; index_f++) {
         DrawSphereEx(p_current_vertices[index_f], 0.015f, 10, 10, BLACK);
     }
@@ -180,6 +191,6 @@ void MeshData::drawMeshData() {
     for (int index = 0; index < qtd_faces; index++) {
         DrawTriangle3D(*(p_model[index].p_vertices[0]),
                        *(p_model[index].p_vertices[1]),
-                       *(p_model[index].p_vertices[2]), ColorAlpha(PINK, 0.5f));
+                       *(p_model[index].p_vertices[2]), ColorAlpha(GREEN, 0.5f));
     }
 }
